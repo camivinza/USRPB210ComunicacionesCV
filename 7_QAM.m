@@ -2,57 +2,57 @@ clc
 clear all
 close all
 
-[y, Fs] = audioread('audio2seg.wav'); %the audio signal is stored in the array y and sampled at a sampling rate of Fs
-max_value = max(y); %maximum value of the audio sample
-min_value = min(y); %medium value of the audio sample
-l=8;
-x = []; %array to store the step values
-step_size = (max_value - min_value)/(l); %calculating the step size
-disp(step_size);
-i = min_value;
+M = 4; % Número de símbolos en la constelación (por ejemplo, 16-QAM)
+s = 100; % Número de símbolos a modular
+data = randi([0 M-1],s,1); % Generar secuencia de datos aleatoria
 
-while ((i>=min_value) & (i<=max_value)) %calculating the step values
-x = [x,i];
-i = i + step_size;
-end
+% Definir el tiempo de muestreo y la frecuencia de la portadora
+fs = 100000; % Frecuencia de muestreo (Hz)
+fc = 1000; % Frecuencia de la portadora (Hz)
+l = 4;
 
-for i=1:length(y) %quantization
-for j=1:(length(x)-1)
-if((y(i)>=x(j))&& (y(i)<=x(j+1))) %checking the range in which each data in y lies
-y1(i) = x(j+1); %quantized sample
-end
-end
-end
+qam = qammod(data,M);
+% Crear un vector de tiempo para la señal modulada
+t_qam = 0 : 1/fs : (length(qam)-1)/fs;
 
+%qam = qammod(data,l');
+%t_qam = (0:length(qam)-1)*T;
 
-y2 = zeros(1,length(y1)); % contains the encoded signal
-for i = 2:length(x)
-for j = 1:length(y1)
-if(x(i)==y1(j))
-y2(j) = i-2;
-end
-end
-end
+% Separar partes real e imaginaria de la señal QAM
+real_part = real(qam);
+imaginary_part = imag(qam);
 
-qam = qammod(y2,l,'PlotConstellation',true);
+% Modulación de las partes real e imaginaria con las portadoras
+modulated_real = real_part .* cos(2*pi*fc*t_qam);
+modulated_imaginary = imaginary_part .* sin(2*pi*fc*t_qam);
 
-t = linspace(0, length(y)/Fs, length(y)); % Vector de tiempo en segundos
+% Suma de las señales moduladas para obtener la señal QAM en el dominio del tiempo
+qam_time_domain = modulated_real + modulated_imaginary;
 
 demodulated = qamdemod(qam,l)
 
 figure(1)
 subplot(3,1,1)
-plot(t,y)
-title('Señal Original QAM');
+plot(data,'linewidth',2), grid on;
+title(' Señal Original');
+xlabel("Data");
+ylabel("Amplitude");
 
+% Visualizar la señal modulada en el tiempo
 figure(1)
 subplot(3,1,2)
-plot(t,qam)
-title('Modulacion QAM');
- 
+plot(t_qam, real(qam )); % Parte real de la señal modulada
+hold on;
+plot(t_qam, imag(qam )); % Parte imaginaria de la señal modulada
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+title('Señal QAM Modulada en el Tiempo');
+legend('Parte Real', 'Parte Imaginaria');
+grid on;
+
 figure(1)
 subplot(3,1,3)
-plot(t,demodulated)
+plot(t_qam,demodulated)
 title('Demodulacion QAM');
 
 % Gráfico de la constelación QAM
