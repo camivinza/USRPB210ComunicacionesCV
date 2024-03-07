@@ -65,15 +65,6 @@ xlabel('Muestras');
 ylabel('Amplitud');
 grid on;
 
-% Rudio Gaussiano OFDM
-%subplot(4, 1, 3);
-%plot(abs(channelSignal));
-%title('Ruidio Gaussiano');
-%xlabel('Muestras');
-%ylabel('Amplitud');
-%grid on;
-
-
 % Señal demodulada OFDM
 subplot(3, 2, [5,6]);
 plot(receivedData(1:100), 'linewidth',2);

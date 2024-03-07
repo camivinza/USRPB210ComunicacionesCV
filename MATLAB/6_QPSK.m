@@ -3,7 +3,7 @@ clear all;
 close all;
 
 cnt=0;
-%data=[0 1 0 1 1 1 0 1 1 1 1 1 0 1]; % information must be of even bit
+%data=[0 1 0 1 1 1 0 1 1 1 1 1 0 1]; % La información deben ser bits.
 data = randn(50,1);
 for i=1:length(data)
     if data(i)<=0
@@ -43,37 +43,10 @@ for i=1:length(data)/2
     y2=s_p_data(2,i)*sin(2*pi*f*t) ;% Quadrature component
     y_in=[y_in y1]; % inphase signal vector
     y_qd=[y_qd y2]; % quadrature signal vector
-    %noise = awgn(i,0,'measured');%s_p_data(1,i)*(sin(2*pi*f*t)+randn(1,99));%((sqrt(0.1)*(randn(1,99)+randn(1,99)))); %noise component
-    %disp("size of noise is: "+size(noise));
-    %y_noise = [y_noise noise]; % noise vector
     y=[y y1+y2]; % modulated signal vector
     %disp(y);
 end
 
-%disp("size of the noise"+size(y_noise));
-Tx_sig=y; % transmitting signal after modulation
-tt=T/99:T/99:(T*length(data))/2;
-%figure(2)
-%disp("size of tt: "+size(tt));
-
-%subplot(4,1,1);
-%plot(tt,y_in,'linewidth',3), grid on;
-%title(' wave form for inphase component in QPSK modulation ');
-%xlabel('time(sec)');
-%ylabel(' amplitude(volt0)');
-
-%subplot(4,1,2);
-%plot(tt,y_qd,'linewidth',3), grid on;
-%title(' wave form for Quadrature component in QPSK modulation ');
-%xlabel('time(sec)');
-%ylabel(' amplitude(volt0');
-
-%subplot(4,1,3);
-%plot(y_noise,'linewidth',3), grid on;
-%title(' wave form for noise component in QPSK modulation ');
-%xlabel('time(sec)');
-%ylabel(' amplitude(volt0');
-figure(1)
 subplot(4,1,2);
 plot(tt,Tx_sig,'r','linewidth',3), grid on;
 title('Modulación QPSK');
@@ -97,7 +70,7 @@ for(i=1:1:length(data)/2)
        Rx_in_data=0; 
     end
     
-    %%XXXXXX Quadrature coherent dector XXXXXX
+    %%XXXXXX Detector Coheretente en Cuadratura XXXXXX
     Z_qd=Rx_sig((i-1)*length(t)+1:i*length(t)).*sin(2*pi*f*t);
     %above line indicat multiplication of received & Quadphase carred signal
     
